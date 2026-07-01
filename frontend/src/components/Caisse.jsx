@@ -58,6 +58,11 @@ export default function Caisse({
     lignesCarnet.push({ cle: 'd' + e.id, type: 'dette', suffixe: 'conf.', montant: Number(e.montant), solde, entree: e })
   }
 
+  const totalComptes  = POCHES.reduce((s, p) => s + (Number(soldes[p.cle]) || 0), 0)
+  const totalEmprunts = carnet.filter(e => e.type === 'creance').reduce((s, e) => s + Number(e.montant), 0)
+  const totalConfies  = carnet.filter(e => e.type === 'dette').reduce((s, e) => s + Number(e.montant), 0)
+  const totalCombine  = totalComptes + totalEmprunts + totalConfies
+
   // --- Édition d'un compte ---
   async function sauvegarderCompte() {
     const montant = parseInt(editCompte.montant, 10)
@@ -240,6 +245,14 @@ export default function Caisse({
             <tr className="ligne-total">
               <td>Total</td>
               <td className="montant" colSpan={2}>{montantSansSuffixe(avoirReel)}</td>
+              <td></td>
+            </tr>
+            <tr className="ligne-total">
+              <td>
+                Total combiné
+                <span className="sous-info">comptes + emprunts + confiés</span>
+              </td>
+              <td className="montant" colSpan={2}>{montantSansSuffixe(totalCombine)}</td>
               <td></td>
             </tr>
           </tbody>
