@@ -14,11 +14,14 @@ function verifier(erreur) {
 export async function fetchSoldes() {
   const { data, error } = await supabase
     .from('soldes_courants')
-    .select('especes, wave, orange_money, free_money')
+    .select('especes, wave, orange_money, free_money, updated_at')
     .eq('id', 1)
     .maybeSingle()
   verifier(error)
-  return data ?? { especes: 0, wave: 0, orange_money: 0, free_money: 0 }
+  return data ?? {
+    especes: 0, wave: 0, orange_money: 0, free_money: 0,
+    updated_at: new Date().toISOString(),
+  }
 }
 
 export async function mettreAJourSoldes(soldes) {

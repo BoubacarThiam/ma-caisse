@@ -1,28 +1,23 @@
 import React, { useState, useEffect, useCallback } from 'react'
-import Dashboard    from './components/Dashboard.jsx'
-import Carnet       from './components/Carnet.jsx'
-import Descente     from './components/Descente.jsx'
-import Confirmation from './components/Confirmation.jsx'
-import Historique   from './components/Historique.jsx'
+import Caisse     from './components/Caisse.jsx'
+import Historique from './components/Historique.jsx'
 import { fetchSoldes, fetchCarnet, fetchDescentes, enregistrerDescente } from './utils/api.js'
-import { synchroniser, tailleFile } from './utils/offline.js'
+import { synchroniser, tailleFile, mettreEnAttente } from './utils/offline.js'
+import { dateAujourdhui } from './utils/format.js'
 
 // Icônes pour la barre de navigation
 const ONGLETS = [
-  { id: 'dashboard',  label: 'Accueil',    icone: '🏠' },
-  { id: 'carnet',     label: 'Carnet',     icone: '📋' },
-  { id: 'descente',   label: 'Descente',   icone: '💰' },
+  { id: 'caisse',     label: 'Caisse',     icone: '🏠' },
   { id: 'historique', label: 'Historique', icone: '📊' },
 ]
 
 export default function App() {
-  const [onglet,         setOnglet]         = useState('dashboard')
+  const [onglet,         setOnglet]         = useState('caisse')
   const [soldes,         setSoldes]         = useState({ especes: 0, wave: 0, orange_money: 0, free_money: 0 })
   const [carnet,         setCarnet]         = useState([])
   const [descentes,      setDescentes]      = useState([])
   const [chargement,     setChargement]     = useState(true)
   const [erreur,         setErreur]         = useState(null)
-  const [confirmation,   setConfirmation]   = useState(null) // descente en attente de validation
   const [fileEnAttente,  setFileEnAttente]  = useState(tailleFile())
   const [syncMessage,    setSyncMessage]    = useState(null)
 
@@ -35,8 +30,10 @@ export default function App() {
       setSoldes(s)
       setCarnet(c)
       setDescentes(d)
+      return { s, c, d }
     } catch (e) {
       setErreur('Impossible de contacter le serveur. Vérifiez votre connexion.')
+      return null
     } finally {
       if (!silencieux) setChargement(false)
     }
@@ -59,10 +56,46 @@ export default function App() {
     }
   }, [chargerDonnees])
 
-  // Chargement initial
+  // Chargement initial, puis clôture automatique de la veille si nécessaire
   useEffect(() => {
-    chargerDonnees()
+    (async () => {
+      const donnees = await chargerDonnees()
+      if (donnees) await cloturerVeilleSiNecessaire(donnees)
+    })()
   }, [chargerDonnees])
+
+  // Si les soldes n'ont pas été touchés aujourd'hui, on archive leur état
+  // (= celui de la veille) dans l'historique avant de continuer à travailler
+  // sur la journée en cours. Ainsi, chaque jour devient une nouvelle ligne
+  // d'historique, sans action manuelle de la part de l'utilisatrice.
+  async function cloturerVeilleSiNecessaire({ s, c, d }) {
+    if (!s.updated_at) return
+    const dateVeille   = s.updated_at.slice(0, 10)
+    const aujourdhui   = dateAujourdhui()
+    if (dateVeille >= aujourdhui) return
+    if (d.some(descente => descente.date === dateVeille)) return
+
+    const totalCreances = c.filter(e => e.type === 'creance').reduce((sum, e) => sum + Number(e.montant), 0)
+    const totalDettes   = c.filter(e => e.type === 'dette').reduce((sum, e)   => sum + Number(e.montant), 0)
+    const avoirReel     = Number(s.especes) + Number(s.wave) + Number(s.orange_money) + Number(s.free_money)
+                          + totalCreances - totalDettes
+
+    const snapshot = {
+      date: dateVeille,
+      especes: Number(s.especes), wave: Number(s.wave),
+      orange_money: Number(s.orange_money), free_money: Number(s.free_money),
+      on_me_doit: totalCreances, je_dois: totalDettes,
+      avoir_reel: avoirReel,
+    }
+
+    try {
+      await enregistrerDescente(snapshot)
+      await chargerDonnees(true)
+    } catch {
+      mettreEnAttente(snapshot)
+      setFileEnAttente(tailleFile())
+    }
+  }
 
   // Tenter la synchronisation quand la connexion revient
   useEffect(() => {
@@ -85,28 +118,6 @@ export default function App() {
                         Number(soldes.orange_money) + Number(soldes.free_money) +
                         totalCreances - totalDettes
   const dernierAvoir  = descentes.length > 0 ? descentes[0].avoir_reel : null
-
-  // Écran de confirmation (plein écran, remplace l'onglet courant)
-  if (confirmation) {
-    return (
-      <div className="app">
-        <Confirmation
-          descente={confirmation}
-          dernierAvoir={dernierAvoir}
-          onValider={async (horsLigne = false) => {
-            setConfirmation(null)
-            setOnglet('historique')
-            if (!horsLigne) {
-              await chargerDonnees()
-            } else {
-              setFileEnAttente(tailleFile())
-            }
-          }}
-          onAnnuler={() => setConfirmation(null)}
-        />
-      </div>
-    )
-  }
 
   return (
     <div className="app">
@@ -153,32 +164,13 @@ export default function App() {
           </div>
         ) : (
           <>
-            {onglet === 'dashboard' && (
-              <Dashboard
+            {onglet === 'caisse' && (
+              <Caisse
                 soldes={soldes}
-                avoirReel={avoirReel}
-                totalCreances={totalCreances}
-                totalDettes={totalDettes}
-                dernierAvoir={dernierAvoir}
-                onFaireDescente={() => setOnglet('descente')}
-                onReinitialiser={chargerDonnees}
-              />
-            )}
-
-            {onglet === 'carnet' && (
-              <Carnet
                 carnet={carnet}
-                onUpdate={() => chargerDonnees(true)}
-              />
-            )}
-
-            {onglet === 'descente' && (
-              <Descente
-                soldes={soldes}
-                totalCreances={totalCreances}
-                totalDettes={totalDettes}
+                avoirReel={avoirReel}
                 dernierAvoir={dernierAvoir}
-                onConfirmer={setConfirmation}
+                onUpdate={() => chargerDonnees(true)}
               />
             )}
 

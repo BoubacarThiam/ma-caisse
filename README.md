@@ -20,11 +20,8 @@ ma-caisse/
         ├── App.jsx
         ├── index.css
         ├── components/
-        │   ├── Dashboard.jsx
-        │   ├── Carnet.jsx
-        │   ├── Descente.jsx
-        │   ├── Confirmation.jsx
-        │   └── Historique.jsx
+        │   ├── Caisse.jsx      ← Tableau combiné (comptes + carnet)
+        │   └── Historique.jsx  ← Journal des jours passés
         └── utils/
             ├── supabaseClient.js ← Client Supabase
             ├── api.js            ← Appels vers Supabase
@@ -94,10 +91,27 @@ Pensez à renseigner les variables d'environnement `VITE_SUPABASE_URL` et
 
 ---
 
+## Fonctionnement au quotidien
+
+L'app tient sur un seul écran (**Caisse**) : un tableau combiné affiche les
+4 comptes (Espèces, Wave, Orange Money, Free Money) et le carnet (emprunts /
+sommes confiées), avec un solde cumulé ligne par ligne jusqu'à l'avoir réel.
+
+- Toucher le crayon à côté d'un compte pour corriger son montant.
+- **+ Emprunt** / **+ Confié** pour ajouter une entrée au carnet.
+- **Réglé** à côté d'une entrée du carnet quand la personne a remboursé son
+  emprunt (ou qu'on lui a rendu la somme confiée) — l'entrée est retirée.
+
+Chaque modification est enregistrée immédiatement. Chaque jour où l'app est
+rouverte, si les comptes n'ont pas encore été touchés aujourd'hui, l'état de
+la veille est automatiquement archivé dans l'**Historique** avant de
+continuer à travailler sur la nouvelle journée — aucune action manuelle de
+clôture n'est nécessaire.
+
 ## Fonctionnement hors-ligne
 
-Si le réseau est coupé au moment de valider une descente :
-- La descente est sauvegardée dans `localStorage` (file d'attente).
+Si le réseau est coupé au moment de la clôture automatique de la veille :
+- L'archive du jour est sauvegardée dans `localStorage` (file d'attente).
 - Un bandeau orange s'affiche en haut de l'écran.
 - À la reconnexion (ou au prochain démarrage de l'app), la synchronisation est automatique.
 

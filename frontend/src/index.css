@@ -305,6 +305,26 @@ body {
   border-collapse: collapse;
 }
 
+/* Largeurs fixes pour le grand livre (Caisse) : évite qu'une bulle de
+   confirmation dans une cellule n'élargisse toute la table. */
+.tableau-ledger {
+  table-layout: fixed;
+}
+
+.tableau-ledger th:nth-child(1) { width: 28%; }
+.tableau-ledger th:nth-child(2) { width: 28%; }
+.tableau-ledger th:nth-child(3) { width: 16%; }
+.tableau-ledger th:nth-child(4) { width: 28%; }
+
+.tableau-ledger td {
+  overflow: hidden;
+  min-width: 0;
+}
+
+.tableau-ledger td.montant {
+  font-size: 13px;
+}
+
 .tableau th {
   background: var(--bg-card-2);
   color: var(--texte-3);
@@ -351,6 +371,56 @@ body {
 
 .tableau tr.ligne-cliquable { cursor: pointer; transition: background 0.15s; }
 .tableau tr.ligne-cliquable:active { background: var(--bg-hover); }
+
+.tableau td.montant.solde {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--texte-3);
+}
+
+.tableau tr.sous-entete td {
+  background: var(--bg-card-2);
+  color: var(--texte-3);
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  padding: 8px 14px;
+  border-bottom: 1px solid var(--bord-fort);
+}
+
+.sous-entete-carnet {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.sous-entete-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.btn-ghost-sm {
+  padding: 4px 10px;
+  font-size: 10px;
+}
+
+.btn-regle {
+  background: rgba(34,197,94,0.10);
+  border: 1px solid rgba(34,197,94,0.3);
+  color: var(--vert-vif);
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 5px 9px;
+  border-radius: var(--r-sm);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s;
+}
+
+.btn-regle:hover { background: rgba(34,197,94,0.18); }
 
 /* ── Boutons ───────────────────────────────────────────────── */
 .btn {
@@ -674,13 +744,15 @@ input[type="date"].champ-input {
 
 .confirm-suppr {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 4px;
-  font-size: 11px;
+  justify-content: flex-end;
+  gap: 2px 4px;
+  font-size: 10px;
   color: var(--texte-2);
   background: var(--bg-input);
   border-radius: var(--r-sm);
-  padding: 3px 8px;
+  padding: 3px 6px;
   border: 1px solid var(--bord-fort);
 }
 
@@ -698,6 +770,7 @@ input[type="date"].champ-input {
 }
 
 .btn-lien.rouge { color: var(--rouge); }
+.btn-lien.vert  { color: var(--vert-vif); }
 
 .total-section {
   display: flex;
@@ -724,84 +797,6 @@ input[type="date"].champ-input {
 
 .total-montant.vert  { color: var(--vert-vif); }
 .total-montant.rouge { color: var(--rouge); }
-
-/* ── Écart ─────────────────────────────────────────────────── */
-.encart-ecart {
-  border-radius: var(--r-md);
-  padding: 16px;
-  margin-top: 4px;
-  text-align: center;
-}
-
-.encart-ecart.ecart-ok {
-  background: rgba(34,197,94,0.08);
-  border: 1px solid rgba(34,197,94,0.25);
-}
-
-.encart-ecart.ecart-nok {
-  background: var(--rouge-glow);
-  border: 1px solid rgba(239,68,68,0.3);
-}
-
-.ecart-label {
-  display: block;
-  font-size: 9px;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  color: var(--texte-3);
-  margin-bottom: 4px;
-}
-
-.ecart-valeur {
-  display: block;
-  font-family: var(--font-mono);
-  font-size: 28px;
-  font-weight: 700;
-  margin-bottom: 4px;
-}
-
-.ecart-ok  .ecart-valeur { color: var(--vert-vif); }
-.ecart-nok .ecart-valeur { color: var(--rouge-doux); }
-
-.ecart-message {
-  display: block;
-  font-size: 12px;
-  color: var(--texte-3);
-}
-
-/* ── Confirmation ──────────────────────────────────────────── */
-.confirmation-ecran {
-  padding: 16px;
-  min-height: 100dvh;
-  padding-bottom: 40px;
-}
-
-.confirmation-header {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 16px;
-}
-
-.confirmation-titre {
-  flex: 1;
-  font-size: 18px;
-  font-weight: 800;
-  color: var(--or-vif);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  text-align: center;
-}
-
-.confirmation-date {
-  text-align: center;
-  color: var(--texte-3);
-  font-size: 13px;
-  margin-bottom: 16px;
-  text-transform: capitalize;
-  letter-spacing: 0.3px;
-}
 
 /* ── Historique ────────────────────────────────────────────── */
 
