@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import Caisse              from './components/Caisse.jsx'
 import Historique          from './components/Historique.jsx'
-import BienvenueParticules from './components/BienvenueParticules.jsx'
+import Bienvenue from './components/Bienvenue.jsx'
 import { fetchSoldes, fetchCarnet, fetchDescentes, enregistrerDescente } from './utils/api.js'
 import { synchroniser, tailleFile, mettreEnAttente } from './utils/offline.js'
 import { dateAujourdhui } from './utils/format.js'
@@ -122,12 +122,7 @@ export default function App() {
   const dernierAvoir  = descentes.length > 0 ? descentes[0].avoir_reel : null
 
   if (montreBienvenue) {
-    return (
-      <BienvenueParticules
-        words={['BIENVENUE', 'AMINATA', 'MA CAISSE']}
-        onContinuer={() => setMontreBienvenue(false)}
-      />
-    )
+    return <Bienvenue onContinuer={() => setMontreBienvenue(false)} />
   }
 
   return (
