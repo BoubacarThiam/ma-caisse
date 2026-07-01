@@ -236,6 +236,12 @@ export default function Caisse({
                 </tr>
               ))
             )}
+
+            <tr className="ligne-total">
+              <td>Total</td>
+              <td className="montant" colSpan={2}>{montantSansSuffixe(avoirReel)}</td>
+              <td></td>
+            </tr>
           </tbody>
         </table>
       </div>

@@ -772,31 +772,17 @@ input[type="date"].champ-input {
 .btn-lien.rouge { color: var(--rouge); }
 .btn-lien.vert  { color: var(--vert-vif); }
 
-.total-section {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 12px;
-  padding-top: 12px;
-  border-top: 1px solid var(--bord-fort);
+.tableau tr.ligne-total td {
+  border-top: 2px solid var(--bord-fort);
+  border-bottom: none;
+  background: var(--bg-card-2);
+  font-weight: 800;
 }
 
-.total-section > span {
-  color: var(--texte-3);
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 1px;
+.tableau tr.ligne-total td.montant {
+  font-size: 17px;
+  color: var(--vert-vif);
 }
-
-.total-montant {
-  font-family: var(--font-mono);
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.total-montant.vert  { color: var(--vert-vif); }
-.total-montant.rouge { color: var(--rouge); }
 
 /* ── Historique ────────────────────────────────────────────── */
 
