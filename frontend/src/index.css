@@ -311,10 +311,9 @@ body {
   table-layout: fixed;
 }
 
-.tableau-ledger th:nth-child(1) { width: 28%; }
-.tableau-ledger th:nth-child(2) { width: 28%; }
-.tableau-ledger th:nth-child(3) { width: 16%; }
-.tableau-ledger th:nth-child(4) { width: 28%; }
+.tableau-ledger th:nth-child(1) { width: 42%; }
+.tableau-ledger th:nth-child(2) { width: 32%; }
+.tableau-ledger th:nth-child(3) { width: 26%; }
 
 .tableau-ledger td {
   overflow: hidden;
@@ -371,12 +370,6 @@ body {
 
 .tableau tr.ligne-cliquable { cursor: pointer; transition: background 0.15s; }
 .tableau tr.ligne-cliquable:active { background: var(--bg-hover); }
-
-.tableau td.montant.solde {
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--texte-3);
-}
 
 .tableau tr.sous-entete td {
   background: var(--bg-card-2);

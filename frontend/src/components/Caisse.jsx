@@ -14,8 +14,6 @@ const POCHES = [
 
 const VIDE_CARNET = { type: 'creance', nom: '', montant: '' }
 
-const montantSansSuffixe = v => formaterMontant(v).replace(' FCFA', '')
-
 export default function Caisse({
   soldes, carnet, avoirReel, dernierAvoir, onUpdate,
 }) {
@@ -37,26 +35,16 @@ export default function Caisse({
     if (formCarnet) setTimeout(() => nomRef.current?.focus(), 80)
   }, [formCarnet?.id, formCarnet?.type])
 
-  // --- Construction des lignes du tableau, avec solde cumulé ---
-  const lignesComptes = []
-  let solde = 0
-  for (const p of POCHES) {
-    solde += Number(soldes[p.cle]) || 0
-    lignesComptes.push({
-      cle: 'compte-' + p.cle,
-      libelle: p.label, icone: p.icone,
-      montant: Number(soldes[p.cle]) || 0, solde,
-    })
-  }
-  const lignesCarnet = []
-  for (const e of carnet.filter(e => e.type === 'creance')) {
-    solde += Number(e.montant)
-    lignesCarnet.push({ cle: 'c' + e.id, type: 'creance', suffixe: 'empr.', montant: Number(e.montant), solde, entree: e })
-  }
-  for (const e of carnet.filter(e => e.type === 'dette')) {
-    solde -= Number(e.montant)
-    lignesCarnet.push({ cle: 'd' + e.id, type: 'dette', suffixe: 'conf.', montant: Number(e.montant), solde, entree: e })
-  }
+  // --- Construction des lignes du tableau ---
+  const lignesComptes = POCHES.map(p => ({
+    cle: 'compte-' + p.cle,
+    libelle: p.label, icone: p.icone,
+    montant: Number(soldes[p.cle]) || 0,
+  }))
+  const lignesCarnet = [
+    ...carnet.filter(e => e.type === 'creance').map(e => ({ cle: 'c' + e.id, type: 'creance', suffixe: 'empr.', montant: Number(e.montant), entree: e })),
+    ...carnet.filter(e => e.type === 'dette').map(e => ({ cle: 'd' + e.id, type: 'dette', suffixe: 'conf.', montant: Number(e.montant), entree: e })),
+  ]
 
   const totalComptes  = POCHES.reduce((s, p) => s + (Number(soldes[p.cle]) || 0), 0)
   const totalEmprunts = carnet.filter(e => e.type === 'creance').reduce((s, e) => s + Number(e.montant), 0)
@@ -159,26 +147,24 @@ export default function Caisse({
         )}
       </div>
 
-      {/* Tableau combiné : comptes + carnet, avec solde cumulé */}
+      {/* Tableau combiné : comptes + carnet */}
       <div className="tableau-conteneur">
         <table className="tableau tableau-ledger">
           <thead>
             <tr>
               <th>Libellé</th>
               <th className="al-droite">Montant</th>
-              <th className="al-droite">Solde</th>
               <th></th>
             </tr>
           </thead>
           <tbody>
             <tr className="sous-entete">
-              <td colSpan={4}>Comptes</td>
+              <td colSpan={3}>Comptes</td>
             </tr>
             {lignesComptes.map(l => (
               <tr key={l.cle}>
                 <td>{l.icone} {l.libelle}</td>
                 <td className="montant">{formaterMontant(l.montant)}</td>
-                <td className="montant solde">{montantSansSuffixe(l.solde)}</td>
                 <td className="actions">
                   <button
                     className="btn-icone"
@@ -194,7 +180,7 @@ export default function Caisse({
             ))}
 
             <tr className="sous-entete">
-              <td colSpan={4}>
+              <td colSpan={3}>
                 <div className="sous-entete-carnet">
                   <span>Carnet</span>
                   <div className="sous-entete-actions">
@@ -206,7 +192,7 @@ export default function Caisse({
             </tr>
 
             {lignesCarnet.length === 0 ? (
-              <tr><td colSpan={4} className="texte-vide">Aucune entrée dans le carnet.</td></tr>
+              <tr><td colSpan={3} className="texte-vide">Aucune entrée dans le carnet.</td></tr>
             ) : (
               lignesCarnet.map(l => (
                 <tr key={l.cle}>
@@ -217,7 +203,6 @@ export default function Caisse({
                   <td className={`montant ${l.type === 'creance' ? 'vert' : 'rouge'}`}>
                     {l.type === 'dette' ? '− ' : ''}{formaterMontant(l.montant)}
                   </td>
-                  <td className="montant solde">{montantSansSuffixe(l.solde)}</td>
                   <td className="actions">
                     {suppressionId === l.entree.id ? (
                       <div className="confirm-suppr">
@@ -244,16 +229,14 @@ export default function Caisse({
 
             <tr className="ligne-total">
               <td>Total</td>
-              <td className="montant" colSpan={2}>{montantSansSuffixe(avoirReel)}</td>
-              <td></td>
+              <td className="montant" colSpan={2}>{formaterMontant(avoirReel)}</td>
             </tr>
             <tr className="ligne-total">
               <td>
                 Total combiné
                 <span className="sous-info">comptes + emprunts + confiés</span>
               </td>
-              <td className="montant" colSpan={2}>{montantSansSuffixe(totalCombine)}</td>
-              <td></td>
+              <td className="montant" colSpan={2}>{formaterMontant(totalCombine)}</td>
             </tr>
           </tbody>
         </table>
