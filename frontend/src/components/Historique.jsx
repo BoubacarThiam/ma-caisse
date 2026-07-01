@@ -85,35 +85,46 @@ export default function Historique({ descentes }) {
       </div>
 
       {/* Liste */}
-      {descentes.map((d, i) => {
-        const precedent = descentes[i + 1]
-        const variation = precedent ? Number(d.avoir_reel) - Number(precedent.avoir_reel) : null
+      <div className="tableau-conteneur">
+        <table className="tableau">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th className="al-droite">Avoir réel</th>
+              <th className="al-droite">Variation</th>
+            </tr>
+          </thead>
+          <tbody>
+            {descentes.map((d, i) => {
+              const precedent = descentes[i + 1]
+              const variation = precedent ? Number(d.avoir_reel) - Number(precedent.avoir_reel) : null
 
-        return (
-          <div
-            key={d.id}
-            className="descente-item"
-            onClick={() => setDetailId(d.id)}
-          >
-            <div className="descente-item-haut">
-              <span className="descente-date">{formaterDate(d.date)}</span>
-              <span className="descente-avoir">{formaterMontant(d.avoir_reel)}</span>
-            </div>
-
-            {variation !== null && (
-              <div className={`descente-variation ${variation >= 0 ? 'positif' : 'negatif'}`}>
-                {variation >= 0 ? '▲' : '▼'} {formaterMontant(Math.abs(variation))}
-              </div>
-            )}
-
-            {Number(d.ecart) !== 0 && d.ecart !== null && (
-              <div className="descente-ecart">
-                Écart : <span className="rouge">{formaterVariation(d.ecart)}</span>
-              </div>
-            )}
-          </div>
-        )
-      })}
+              return (
+                <tr
+                  key={d.id}
+                  className="ligne-cliquable"
+                  onClick={() => setDetailId(d.id)}
+                >
+                  <td>
+                    {formaterDate(d.date)}
+                    {Number(d.ecart) !== 0 && d.ecart !== null && (
+                      <span className="sous-info rouge">
+                        Écart : {formaterVariation(d.ecart)}
+                      </span>
+                    )}
+                  </td>
+                  <td className="montant">{formaterMontant(d.avoir_reel)}</td>
+                  <td className={`montant ${variation === null ? '' : variation >= 0 ? 'positif' : 'negatif'}`}>
+                    {variation !== null
+                      ? `${variation >= 0 ? '▲' : '▼'} ${formaterMontant(Math.abs(variation))}`
+                      : '—'}
+                  </td>
+                </tr>
+              )
+            })}
+          </tbody>
+        </table>
+      </div>
 
     </div>
   )

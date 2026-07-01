@@ -3,10 +3,10 @@ import { formaterMontant } from '../utils/format.js'
 import { reinitialiserSoldes } from '../utils/api.js'
 
 const POCHES = [
-  { cle: 'especes',      label: 'Espèces',      icone: '💵', classe: 'especes' },
-  { cle: 'wave',         label: 'Wave',         icone: '🔵', classe: 'wave' },
-  { cle: 'orange_money', label: 'Orange Money', icone: '🟠', classe: 'orange' },
-  { cle: 'free_money',   label: 'Free Money',   icone: '🟣', classe: 'free' },
+  { cle: 'especes',      label: 'Espèces',      icone: '💵' },
+  { cle: 'wave',         label: 'Wave',         icone: '🔵' },
+  { cle: 'orange_money', label: 'Orange Money', icone: '🟠' },
+  { cle: 'free_money',   label: 'Free Money',   icone: '🟣' },
 ]
 
 export default function Dashboard({
@@ -53,27 +53,40 @@ export default function Dashboard({
 
       {/* ── 4 poches monétaires ── */}
       <div className="section-titre">Comptes</div>
-      <div className="grille-poches">
-        {POCHES.map(p => (
-          <div key={p.cle} className={`poche ${p.classe}`}>
-            <div className="poche-icone">{p.icone}</div>
-            <div className="poche-nom">{p.label}</div>
-            <div className="poche-montant">{formaterMontant(soldes[p.cle])}</div>
-          </div>
-        ))}
+      <div className="tableau-conteneur">
+        <table className="tableau">
+          <thead>
+            <tr>
+              <th>Compte</th>
+              <th className="al-droite">Montant</th>
+            </tr>
+          </thead>
+          <tbody>
+            {POCHES.map(p => (
+              <tr key={p.cle}>
+                <td>{p.icone} {p.label}</td>
+                <td className="montant">{formaterMontant(soldes[p.cle])}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
 
       {/* ── Créances / dettes ── */}
       <div className="section-titre">Carnet</div>
-      <div className="carte" style={{ padding: '12px 16px', marginBottom: 16 }}>
-        <div className="info-ligne">
-          <span className="info-cle">📥 On me doit</span>
-          <span className="info-valeur vert">{formaterMontant(totalCreances)}</span>
-        </div>
-        <div className="info-ligne">
-          <span className="info-cle">📤 Je dois</span>
-          <span className="info-valeur rouge">− {formaterMontant(totalDettes)}</span>
-        </div>
+      <div className="tableau-conteneur">
+        <table className="tableau">
+          <tbody>
+            <tr>
+              <td>📥 On me doit</td>
+              <td className="montant vert">{formaterMontant(totalCreances)}</td>
+            </tr>
+            <tr>
+              <td>📤 Je dois</td>
+              <td className="montant rouge">− {formaterMontant(totalDettes)}</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
 
       {/* ── CTA ── */}

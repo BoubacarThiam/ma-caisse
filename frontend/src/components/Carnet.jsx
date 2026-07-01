@@ -232,51 +232,63 @@ function SectionCarnet({
       {entrees.length === 0 ? (
         <p className="texte-vide">Aucune entrée — appuyez sur Ajouter.</p>
       ) : (
-        <ul className="liste-carnet">
-          {entrees.map(e => (
-            <li key={e.id} className="entree-carnet">
-              <div className="entree-info">
-                <span className="entree-nom">{e.nom}</span>
-                <span className="entree-date">
-                  {formaterDateCourte(e.date_creation?.split(' ')[0])}
-                </span>
-              </div>
+        <div className="tableau-conteneur" style={{ marginBottom: 0 }}>
+          <table className="tableau">
+            <thead>
+              <tr>
+                <th>Nom</th>
+                <th className="al-droite">Montant</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {entrees.map(e => (
+                <tr key={e.id}>
+                  <td>
+                    {e.nom}
+                    <span className="sous-info">
+                      {formaterDateCourte(e.date_creation?.split(' ')[0])}
+                    </span>
+                  </td>
 
-              <span className={`entree-montant ${couleur}`}>
-                {formaterMontant(e.montant)}
-              </span>
+                  <td className={`montant ${couleur}`}>
+                    {formaterMontant(e.montant)}
+                  </td>
 
-              <div className="entree-actions">
-                <button
-                  className="btn-icone"
-                  onClick={() => onModifier(e)}
-                  title="Modifier"
-                >✏️</button>
-
-                {suppressionId === e.id ? (
-                  <div className="confirm-suppr">
-                    <span>Suppr ?</span>
-                    <button
-                      className="btn-lien rouge"
-                      onClick={() => onConfirmerSuppression(e.id)}
-                      disabled={enCours}
-                    >Oui</button>
-                    <button
-                      className="btn-lien"
-                      onClick={() => onDemanderSuppression(null)}
-                    >Non</button>
-                  </div>
-                ) : (
-                  <button
-                    className="btn-icone"
-                    onClick={() => onDemanderSuppression(e.id)}
-                    title="Supprimer"
-                  >🗑️</button>
-                )}
-              </div>
-            </li>
-          ))}
-        </ul>
+                  <td className="actions">
+                    {suppressionId === e.id ? (
+                      <div className="confirm-suppr">
+                        <span>Suppr ?</span>
+                        <button
+                          className="btn-lien rouge"
+                          onClick={() => onConfirmerSuppression(e.id)}
+                          disabled={enCours}
+                        >Oui</button>
+                        <button
+                          className="btn-lien"
+                          onClick={() => onDemanderSuppression(null)}
+                        >Non</button>
+                      </div>
+                    ) : (
+                      <>
+                        <button
+                          className="btn-icone"
+                          onClick={() => onModifier(e)}
+                          title="Modifier"
+                        >✏️</button>
+                        <button
+                          className="btn-icone"
+                          onClick={() => onDemanderSuppression(e.id)}
+                          title="Supprimer"
+                        >🗑️</button>
+                      </>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
 
       <div className="total-section">
