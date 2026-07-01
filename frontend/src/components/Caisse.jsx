@@ -49,6 +49,7 @@ export default function Caisse({
   const totalComptes  = POCHES.reduce((s, p) => s + (Number(soldes[p.cle]) || 0), 0)
   const totalEmprunts = carnet.filter(e => e.type === 'creance').reduce((s, e) => s + Number(e.montant), 0)
   const totalConfies  = carnet.filter(e => e.type === 'dette').reduce((s, e) => s + Number(e.montant), 0)
+  const totalCarnet   = totalEmprunts - totalConfies
   const totalCombine  = totalComptes + totalEmprunts - totalConfies
 
   // --- Édition d'un compte ---
@@ -228,8 +229,11 @@ export default function Caisse({
             )}
 
             <tr className="ligne-total">
-              <td>Total</td>
-              <td className="montant" colSpan={2}>{formaterMontant(avoirReel)}</td>
+              <td>
+                Total
+                <span className="sous-info">emprunts − confiés</span>
+              </td>
+              <td className="montant" colSpan={2}>{formaterMontant(totalCarnet)}</td>
             </tr>
             <tr className="ligne-total">
               <td>
