@@ -36,6 +36,9 @@ export default function Dashboard({
   return (
     <div className="ecran">
 
+      {/* ── Message d'accueil ── */}
+      <div className="accueil-perso">Bonjour Aminata 👋</div>
+
       {/* ── Avoir réel ── */}
       <div className="avoir-principal">
         <div className="avoir-label">Avoir réel</div>

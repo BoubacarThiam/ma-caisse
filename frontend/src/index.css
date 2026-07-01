@@ -104,6 +104,12 @@ body {
   z-index: 50;
 }
 
+.app-header-titres {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
 .app-titre {
   font-size: 20px;
   font-weight: 800;
@@ -113,6 +119,13 @@ body {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+}
+
+.app-sous-titre {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  color: var(--texte-2);
 }
 
 .badge-offline {
@@ -200,6 +213,13 @@ body {
   padding: 16px;
   margin-bottom: 12px;
   box-shadow: var(--ombre-carte);
+}
+
+.accueil-perso {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--texte-2);
+  margin-bottom: 12px;
 }
 
 /* ── Avoir Réel ────────────────────────────────────────────── */

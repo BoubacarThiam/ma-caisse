@@ -113,7 +113,10 @@ export default function App() {
 
       {/* En-tête */}
       <header className="app-header">
-        <h1 className="app-titre">Ma Caisse</h1>
+        <div className="app-header-titres">
+          <h1 className="app-titre">Ma Caisse</h1>
+          <span className="app-sous-titre">Aminata Thiam</span>
+        </div>
         {fileEnAttente > 0 && (
           <span className="badge-offline" title={`${fileEnAttente} descente(s) en attente de synchronisation`}>
             📶 {fileEnAttente}
