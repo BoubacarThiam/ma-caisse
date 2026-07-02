@@ -14,12 +14,12 @@ function verifier(erreur) {
 export async function fetchSoldes() {
   const { data, error } = await supabase
     .from('soldes_courants')
-    .select('especes, wave, orange_money, free_money, updated_at')
+    .select('especes, wave, orange_money, free_money, fond_global, updated_at')
     .eq('id', 1)
     .maybeSingle()
   verifier(error)
   return data ?? {
-    especes: 0, wave: 0, orange_money: 0, free_money: 0,
+    especes: 0, wave: 0, orange_money: 0, free_money: 0, fond_global: 0,
     updated_at: new Date().toISOString(),
   }
 }
@@ -32,14 +32,15 @@ export async function mettreAJourSoldes(soldes) {
       wave:         Number(soldes.wave)          || 0,
       orange_money: Number(soldes.orange_money)  || 0,
       free_money:   Number(soldes.free_money)    || 0,
+      fond_global:  Number(soldes.fond_global)   || 0,
     })
     .eq('id', 1)
   verifier(error)
   return { message: 'Soldes mis à jour.' }
 }
 
-export const reinitialiserSoldes = () =>
-  mettreAJourSoldes({ especes: 0, wave: 0, orange_money: 0, free_money: 0 })
+export const reinitialiserSoldes = (fondGlobal = 0) =>
+  mettreAJourSoldes({ especes: 0, wave: 0, orange_money: 0, free_money: 0, fond_global: fondGlobal })
 
 // --- Carnet ---
 

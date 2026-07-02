@@ -46,6 +46,7 @@ create table if not exists soldes_courants (
   wave          numeric(15,0) not null default 0,
   orange_money  numeric(15,0) not null default 0,
   free_money    numeric(15,0) not null default 0,
+  fond_global   numeric(15,0) not null default 6597000,
   updated_at    timestamptz not null default now(),
   constraint soldes_courants_singleton check (id = 1)
 );
@@ -99,6 +100,7 @@ begin
      set especes = p_especes, wave = p_wave,
          orange_money = p_orange_money, free_money = p_free_money
    where id = 1;
+
 
   return nouvelle;
 end;
