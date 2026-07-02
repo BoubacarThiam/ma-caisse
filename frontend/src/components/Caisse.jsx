@@ -249,13 +249,6 @@ export default function Caisse({
 
             <tr className="ligne-total">
               <td>
-                Total
-                <span className="sous-info">emprunts − confiés</span>
-              </td>
-              <td className="montant" colSpan={2}>{formaterMontant(totalCarnet)}</td>
-            </tr>
-            <tr className="ligne-total">
-              <td>
                 Total combiné
                 <span className="sous-info">comptes + emprunts − confiés − fond global</span>
               </td>
